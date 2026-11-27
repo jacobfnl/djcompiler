@@ -186,10 +186,10 @@ class DjangoCompiler:
                         cython_dir: str = "cython",
                         compiler_directives: dict = None) -> None:
         """
-        A method that compile the python modules
+        A method that compiles the python modules
         :param ext_modules: list[Extension]: not required -> files that should be compiled
         :param cython_dir: str -> the C files output dir.
-        :param compiler_directives: dict -> extra compiler option [like the lanugae]
+        :param compiler_directives: dict -> extra compiler options [like the language]
         :return: None
         """
         if ext_modules is None:
