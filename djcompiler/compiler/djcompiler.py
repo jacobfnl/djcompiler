@@ -10,7 +10,7 @@ from Cython.Build import cythonize
 import os
 from pathlib import Path
 import shutil
-from typing import List, Set
+from typing import List
 
 
 class DjangoCompiler:
@@ -92,8 +92,9 @@ class DjangoCompiler:
                 return False
         return True
 
-    def ext_modules(self) -> Set[Extension]:
-        modules: set = set()
+    def ext_modules(self) -> List[Extension]:
+        # A list, not a set: setuptools 84+ makes Extension unhashable.
+        modules: List[Extension] = []
         for path, subdirs, files in os.walk("./"):
             if self.check_ignored_dirs(path_name=path):
                 continue
@@ -109,7 +110,7 @@ class DjangoCompiler:
                         and not name[0] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']):
                     file = os.path.join(path, name)
                     module_name = file.split("./")[1].split('.py')[0]
-                    modules.add(Extension(module_name.replace("/", "."), [file]))
+                    modules.append(Extension(module_name.replace("/", "."), [file]))
         return modules
 
     def copy_migrations_to_build(self):
@@ -181,12 +182,12 @@ class DjangoCompiler:
                 continue
             print(f"needed file copied {file}")
 
-    def compile_modules(self, ext_modules: Set[Extension] = None,
+    def compile_modules(self, ext_modules: List[Extension] = None,
                         cython_dir: str = "cython",
                         compiler_directives: dict = None) -> None:
         """
         A method that compile the python modules
-        :param ext_modules: set[Extension]: not required -> files that should be compiled
+        :param ext_modules: list[Extension]: not required -> files that should be compiled
         :param cython_dir: str -> the C files output dir.
         :param compiler_directives: dict -> extra compiler option [like the lanugae]
         :return: None
